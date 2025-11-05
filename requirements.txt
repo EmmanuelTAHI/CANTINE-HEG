@@ -1,0 +1,22 @@
+# =========================
+# Core Django
+# =========================
+Django>=4.2,<5.0
+djangorestframework>=3.14.0  # si tu utilises DRF
+psycopg2-binary>=2.9.6      # si tu utilises PostgreSQL
+
+# =========================
+# Testing
+# =========================
+pytest>=8.0
+pytest-django>=4.5
+
+# =========================
+# Linting / Quality / Formatting
+# =========================
+flake8>=7.0
+
+# =========================
+# Pre-commit hooks
+# =========================
+pre-commit>=4.3.0
