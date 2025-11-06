@@ -5,7 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("cantine_web.urls")),
+    path("api/", include("cantine_web.api_urls")),  # API REST pour Flutter
+    path("", include("cantine_web.urls")),  # Interface web pour Admin
 ]
 
 if settings.DEBUG:
