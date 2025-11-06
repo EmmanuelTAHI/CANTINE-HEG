@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.contrib.auth.models import User
 from .forms import UserProfileForm
+from .utils import log_action
 
 
 def login_view(request):
