@@ -1,0 +1,130 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Inscriptions mensuelles - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Inscriptions mensuelles
+                </h1>
+                <p class="text-lg text-neutral/70">Gestion des inscriptions mensuelles à la cantine</p>
+            </div>
+            <a href="{% url 'cantine_web:inscription_mensuelle_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                <i class="fas fa-plus-circle mr-2"></i>Ajouter une inscription
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <select name="eleve" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous les élèves</option>
+                {% for eleve in eleves %}
+                <option value="{{ eleve.id }}">{{ eleve }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="annee" placeholder="Année" value="{{ annee_selected }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <input type="number" name="mois" placeholder="Mois (1-12)" min="1" max="12" value="{{ mois_selected }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                <i class="fas fa-search mr-2"></i>Filtrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des inscriptions -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Année</th>
+                        <th class="text-neutral/70 font-semibold">Mois</th>
+                        <th class="text-neutral/70 font-semibold">Statut</th>
+                        <th class="text-neutral/70 font-semibold">Créé par</th>
+                        <th class="text-neutral/70 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscription in inscriptions %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                {% if inscription.eleve.photo %}
+                                <div class="avatar">
+                                    <div class="w-10 rounded-full ring-2 ring-primary/20">
+                                        <img src="{{ inscription.eleve.photo.url }}" alt="{{ inscription.eleve }}">
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary/10 text-primary rounded-full w-10 ring-2 ring-primary/20">
+                                        <span class="text-xs font-semibold">{{ inscription.eleve.prenom|first }}{{ inscription.eleve.nom|first }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-bold text-neutral">{{ inscription.eleve.prenom }} {{ inscription.eleve.nom }}</div>
+                                    <div class="text-sm text-neutral/60">{{ inscription.eleve.classe|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-neutral">{{ inscription.annee }}</td>
+                        <td class="text-neutral">{{ inscription.mois }}</td>
+                        <td>
+                            {% if inscription.inscrit %}
+                            <span class="px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">Inscrit</span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-error/10 text-error rounded-full text-xs font-semibold">Non inscrit</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-neutral/70">{{ inscription.created_by|default:"—" }}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a href="{% url 'cantine_web:inscription_mensuelle_update' inscription.pk %}" class="btn btn-sm btn-ghost text-primary hover:text-white hover:bg-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'cantine_web:inscription_mensuelle_delete' inscription.pk %}" class="btn btn-sm btn-ghost text-error hover:text-white hover:bg-error">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-neutral/60 py-12">Aucune inscription trouvée</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="container mx-auto px-4 mb-8">
+    <div class="flex justify-center">
+        <div class="join bg-white border border-gray-200 rounded-lg shadow-sm">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">«</a>
+            {% endif %}
+            <button class="join-item btn bg-white border-gray-200 text-neutral">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">»</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Modifier{% else %}Ajouter{% endif %} un menu{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            {% if object %}Modifier{% else %}Ajouter{% endif %} un menu
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Image du menu -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-neutral/70 mb-4">Image du menu</label>
+                {% if object and object.image %}
+                <div class="mb-4">
+                    <img src="{{ object.image.url }}" alt="{{ object.plat_principal }}" class="w-full h-64 object-cover rounded-lg border border-gray-200">
+                </div>
+                {% endif %}
+                {{ form.image }}
+                {% if form.image.errors %}
+                <p class="text-error text-sm mt-2">{{ form.image.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.date.label }}</span>
+                    </label>
+                    {{ form.date }}
+                    {% if form.date.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.date.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.plat_principal.label }}</span>
+                    </label>
+                    {{ form.plat_principal }}
+                    {% if form.plat_principal.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.plat_principal.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.accompagnement.label }}</span>
+                    </label>
+                    {{ form.accompagnement }}
+                    {% if form.accompagnement.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.accompagnement.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.dessert.label }}</span>
+                    </label>
+                    {{ form.dessert }}
+                    {% if form.dessert.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.dessert.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.notes.label }}</span>
+                    </label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.notes.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label cursor-pointer justify-start gap-4">
+                        {{ form.disponible }}
+                        <span class="label-text font-semibold text-neutral">{{ form.disponible.label }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:menu_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

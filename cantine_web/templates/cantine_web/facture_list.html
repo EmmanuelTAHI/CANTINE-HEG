@@ -1,0 +1,126 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Factures - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Factures
+                </h1>
+                <p class="text-lg text-neutral/70">Gestion des factures de la prestataire</p>
+            </div>
+            {% if user.profil.is_prestataire or user.profil.is_admin %}
+            <a href="{% url 'cantine_web:facture_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                <i class="fas fa-plus-circle mr-2"></i>Créer une facture
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input type="number" name="annee" placeholder="Année" value="{{ request.GET.annee }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <input type="number" name="mois" placeholder="Mois (1-12)" min="1" max="12" value="{{ request.GET.mois }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <select name="statut" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous les statuts</option>
+                <option value="BROUILLON" {% if request.GET.statut == 'BROUILLON' %}selected{% endif %}>Brouillon</option>
+                <option value="ENVOYEE" {% if request.GET.statut == 'ENVOYEE' %}selected{% endif %}>Envoyée</option>
+                <option value="PAYEE" {% if request.GET.statut == 'PAYEE' %}selected{% endif %}>Payée</option>
+                <option value="ANNULEE" {% if request.GET.statut == 'ANNULEE' %}selected{% endif %}>Annulée</option>
+            </select>
+            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                <i class="fas fa-search mr-2"></i>Filtrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des factures -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Numéro</th>
+                        <th class="text-neutral/70 font-semibold">Période</th>
+                        <th class="text-neutral/70 font-semibold">Repas servis</th>
+                        <th class="text-neutral/70 font-semibold">Montant total</th>
+                        <th class="text-neutral/70 font-semibold">Statut</th>
+                        <th class="text-neutral/70 font-semibold">Date émission</th>
+                        <th class="text-neutral/70 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for facture in factures %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="font-semibold text-neutral">{{ facture.numero }}</td>
+                        <td class="text-neutral">{{ facture.mois }}/{{ facture.annee }}</td>
+                        <td class="text-neutral">{{ facture.nombre_repas_servis }}</td>
+                        <td class="font-bold text-primary text-lg">{{ facture.montant_total|floatformat:0 }} FCFA</td>
+                        <td>
+                            {% if facture.statut == 'PAYEE' %}
+                            <span class="px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">Payée</span>
+                            {% elif facture.statut == 'ENVOYEE' %}
+                            <span class="px-3 py-1 bg-warning/10 text-warning rounded-full text-xs font-semibold">Envoyée</span>
+                            {% elif facture.statut == 'BROUILLON' %}
+                            <span class="px-3 py-1 bg-info/10 text-info rounded-full text-xs font-semibold">Brouillon</span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-error/10 text-error rounded-full text-xs font-semibold">Annulée</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-neutral/70">{{ facture.date_emission|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a href="{% url 'cantine_web:facture_detail' facture.pk %}" class="btn btn-sm btn-ghost text-primary hover:text-white hover:bg-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if user.profil.is_prestataire or user.profil.is_admin %}
+                                <a href="{% url 'cantine_web:facture_update' facture.pk %}" class="btn btn-sm btn-ghost text-warning hover:text-white hover:bg-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if facture.statut == 'BROUILLON' %}
+                                <a href="{% url 'cantine_web:facture_delete' facture.pk %}" class="btn btn-sm btn-ghost text-error hover:text-white hover:bg-error">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-neutral/60 py-12">Aucune facture trouvée</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="container mx-auto px-4 mb-8">
+    <div class="flex justify-center">
+        <div class="join bg-white border border-gray-200 rounded-lg shadow-sm">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">«</a>
+            {% endif %}
+            <button class="join-item btn bg-white border-gray-200 text-neutral">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">»</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

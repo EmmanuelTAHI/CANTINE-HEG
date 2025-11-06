@@ -1,0 +1,36 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Sauvegarde - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Sauvegarde de la base de données
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-2xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <div class="alert alert-info mb-6">
+            <i class="fas fa-info-circle"></i>
+            <span>La sauvegarde créera une copie complète de la base de données SQLite.</span>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary w-full text-white">
+                <i class="fas fa-download mr-2"></i>Créer une sauvegarde
+            </button>
+        </form>
+
+        <div class="mt-6">
+            <a href="{% url 'cantine_web:restore' %}" class="btn btn-outline w-full">
+                <i class="fas fa-upload mr-2"></i>Restaurer une sauvegarde
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

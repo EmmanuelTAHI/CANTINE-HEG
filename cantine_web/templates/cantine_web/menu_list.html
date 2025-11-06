@@ -1,0 +1,114 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Menus - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Menus
+                </h1>
+                <p class="text-lg text-neutral/70">Gestion des menus de la cantine</p>
+            </div>
+            <a href="{% url 'cantine_web:menu_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                <i class="fas fa-plus-circle mr-2"></i>Ajouter un menu
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Menu du jour en vedette -->
+{% if menu_du_jour %}
+<div class="container mx-auto px-4 mb-12">
+    <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-lg shadow-lg overflow-hidden">
+        <div class="flex flex-col md:flex-row">
+            {% if menu_du_jour.image %}
+            <div class="md:w-1/3">
+                <img src="{{ menu_du_jour.image.url }}" alt="{{ menu_du_jour.plat_principal }}" class="w-full h-full object-cover min-h-[300px]">
+            </div>
+            {% else %}
+            <div class="md:w-1/3 bg-white/20 min-h-[300px] flex items-center justify-center">
+                <i class="fas fa-utensils text-8xl opacity-50"></i>
+            </div>
+            {% endif %}
+            <div class="md:w-2/3 p-8">
+                <h2 class="text-3xl font-heading font-bold mb-6">Menu du jour</h2>
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <p class="text-sm opacity-90 mb-1">Plat principal</p>
+                        <p class="text-lg font-semibold">{{ menu_du_jour.plat_principal }}</p>
+                    </div>
+                    {% if menu_du_jour.accompagnement %}
+                    <div>
+                        <p class="text-sm opacity-90 mb-1">Accompagnement</p>
+                        <p class="text-lg font-semibold">{{ menu_du_jour.accompagnement }}</p>
+                    </div>
+                    {% endif %}
+                    {% if menu_du_jour.dessert %}
+                    <div>
+                        <p class="text-sm opacity-90 mb-1">Dessert</p>
+                        <p class="text-lg font-semibold">{{ menu_du_jour.dessert }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex items-center justify-end pt-4 border-t border-white/30">
+                    <a href="{% url 'cantine_web:menu_list' %}" class="hover:underline font-semibold">VOIR TOUS LES MENUS →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Liste des menus -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for menu in menus %}
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+            <div class="h-48 overflow-hidden">
+                {% if menu.image %}
+                <img src="{{ menu.image.url }}" alt="{{ menu.plat_principal }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <i class="fas fa-utensils text-6xl text-primary/50"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-bold text-neutral">{{ menu.date|date:"d/m/Y" }}</h3>
+                    {% if menu.disponible %}
+                    <span class="px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">Disponible</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-error/10 text-error rounded-full text-xs font-semibold">Indisponible</span>
+                    {% endif %}
+                </div>
+                <p class="font-semibold text-lg mb-2 text-neutral">{{ menu.plat_principal }}</p>
+                {% if menu.accompagnement %}
+                <p class="text-sm text-neutral/60 mb-1"><i class="fas fa-utensils mr-1"></i>{{ menu.accompagnement }}</p>
+                {% endif %}
+                {% if menu.dessert %}
+                <p class="text-sm text-neutral/60 mb-4"><i class="fas fa-cookie mr-1"></i>{{ menu.dessert }}</p>
+                {% endif %}
+                <div class="flex items-center justify-end pt-4 border-t border-gray-100">
+                    <a href="{% url 'cantine_web:menu_update' menu.pk %}" class="text-primary hover:underline text-sm font-semibold">
+                        <i class="fas fa-edit mr-1"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-12 text-center">
+                <i class="fas fa-utensils text-6xl text-neutral/30 mb-4"></i>
+                <p class="text-lg text-neutral/60">Aucun menu enregistré</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

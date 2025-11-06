@@ -1,0 +1,121 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Prestataires - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Prestataires
+                </h1>
+                <p class="text-lg text-neutral/70">Gestion des comptes prestataires</p>
+            </div>
+            <a href="{% url 'cantine_web:prestataire_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                <i class="fas fa-user-plus mr-2"></i>Ajouter un prestataire
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <select name="role" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous les rôles</option>
+                <option value="ADMIN" {% if request.GET.role == 'ADMIN' %}selected{% endif %}>Administrateur</option>
+                <option value="PRESTATAIRE" {% if request.GET.role == 'PRESTATAIRE' %}selected{% endif %}>Prestataire</option>
+            </select>
+            <select name="actif" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous</option>
+                <option value="1" {% if request.GET.actif == '1' %}selected{% endif %}>Actifs</option>
+                <option value="0" {% if request.GET.actif == '0' %}selected{% endif %}>Inactifs</option>
+            </select>
+            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                <i class="fas fa-search mr-2"></i>Filtrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des prestataires -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for prestataire in prestataires %}
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="avatar placeholder">
+                    <div class="bg-primary/10 text-primary rounded-full w-16 ring-4 ring-primary/20">
+                        <span class="text-2xl font-bold">{{ prestataire.user.username|first|upper }}</span>
+                    </div>
+                </div>
+                <div>
+                    {% if prestataire.role == 'ADMIN' %}
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">Admin</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-info/10 text-info rounded-full text-xs font-semibold">Prestataire</span>
+                    {% endif %}
+                </div>
+            </div>
+            <h2 class="text-xl font-bold mb-2 text-neutral">{{ prestataire.user.get_full_name|default:prestataire.user.username }}</h2>
+            <p class="text-sm text-neutral/60 mb-1">
+                <i class="fas fa-envelope mr-2"></i>{{ prestataire.user.email }}
+            </p>
+            {% if prestataire.entreprise %}
+            <p class="text-sm text-neutral/60 mb-1">
+                <i class="fas fa-building mr-2"></i>{{ prestataire.entreprise }}
+            </p>
+            {% endif %}
+            {% if prestataire.telephone %}
+            <p class="text-sm text-neutral/60 mb-4">
+                <i class="fas fa-phone mr-2"></i>{{ prestataire.telephone }}
+            </p>
+            {% endif %}
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                {% if prestataire.actif %}
+                <span class="px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">Actif</span>
+                {% else %}
+                <span class="px-3 py-1 bg-error/10 text-error rounded-full text-xs font-semibold">Inactif</span>
+                {% endif %}
+                <div class="flex gap-2">
+                    <a href="{% url 'cantine_web:prestataire_update' prestataire.pk %}" class="btn btn-sm btn-ghost text-warning hover:text-white hover:bg-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'cantine_web:prestataire_delete' prestataire.pk %}" class="btn btn-sm btn-ghost text-error hover:text-white hover:bg-error">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-12 text-center">
+                <i class="fas fa-user-tie text-6xl text-neutral/30 mb-4"></i>
+                <p class="text-lg text-neutral/60">Aucun prestataire trouvé</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="container mx-auto px-4 mb-8">
+    <div class="flex justify-center">
+        <div class="join bg-white border border-gray-200 rounded-lg shadow-sm">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">«</a>
+            {% endif %}
+            <button class="join-item btn bg-white border-gray-200 text-neutral">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">»</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

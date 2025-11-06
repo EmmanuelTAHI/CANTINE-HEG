@@ -1,0 +1,99 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Élèves inscrits - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Élèves inscrits
+                </h1>
+                <p class="text-lg text-neutral/70">Liste des élèves inscrits pour {{ mois }}/{{ annee }}</p>
+            </div>
+            <div class="flex gap-3">
+                <form method="get" class="flex gap-2">
+                    <input type="number" name="annee" placeholder="Année" value="{{ annee }}" min="2020" max="2100" class="input input-bordered bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <input type="number" name="mois" placeholder="Mois" value="{{ mois }}" min="1" max="12" class="input input-bordered bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                        <i class="fas fa-search mr-2"></i>Voir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistique -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-neutral mb-1">Total élèves inscrits</h3>
+                <p class="text-3xl font-bold text-primary">{{ eleves|length }}</p>
+            </div>
+            <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center">
+                <i class="fas fa-users text-primary text-3xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des élèves -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Classe</th>
+                        <th class="text-neutral/70 font-semibold">Contact parent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for eleve in eleves %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                {% if eleve.photo %}
+                                <div class="avatar">
+                                    <div class="w-10 rounded-full ring-2 ring-primary/20">
+                                        <img src="{{ eleve.photo.url }}" alt="{{ eleve }}">
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary/10 text-primary rounded-full w-10 ring-2 ring-primary/20">
+                                        <span class="text-xs font-semibold">{{ eleve.prenom|first }}{{ eleve.nom|first }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-bold text-neutral">{{ eleve.prenom }} {{ eleve.nom }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-neutral/70">{{ eleve.classe|default:"—" }}</td>
+                        <td class="text-neutral/70">
+                            {% if eleve.telephone_parent %}
+                            <i class="fas fa-phone mr-1"></i>{{ eleve.telephone_parent }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-neutral/60 py-12">Aucun élève inscrit pour cette période</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Restauration - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Restaurer la base de données
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-2xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <div class="alert alert-warning mb-6">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span><strong>Attention :</strong> La restauration remplacera toutes les données actuelles par celles du fichier de sauvegarde.</span>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-semibold text-neutral">Fichier de sauvegarde (.sqlite3)</span>
+                </label>
+                <input type="file" name="backup_file" accept=".sqlite3" required class="file-input file-input-bordered w-full">
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8">
+                <a href="{% url 'cantine_web:backup' %}" class="btn btn-ghost">Annuler</a>
+                <button type="submit" class="btn btn-error text-white">
+                    <i class="fas fa-upload mr-2"></i>Restaurer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

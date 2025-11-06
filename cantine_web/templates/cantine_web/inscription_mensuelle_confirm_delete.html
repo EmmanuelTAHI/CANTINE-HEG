@@ -1,0 +1,48 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Supprimer l'inscription - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Supprimer l'inscription
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-2xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <div class="alert alert-warning mb-6">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Êtes-vous sûr de vouloir supprimer cette inscription mensuelle ?</span>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h3 class="font-bold text-lg mb-4 text-neutral">Détails de l'inscription</h3>
+            <div class="space-y-2">
+                <p><span class="font-semibold">Élève :</span> {{ object.eleve }}</p>
+                <p><span class="font-semibold">Période :</span> {{ object.mois }}/{{ object.annee }}</p>
+                <p><span class="font-semibold">Statut :</span>
+                    {% if object.inscrit %}
+                    <span class="text-success">Inscrit</span>
+                    {% else %}
+                    <span class="text-error">Non inscrit</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="flex justify-end gap-4">
+                <a href="{% url 'cantine_web:inscription_mensuelle_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-error text-white rounded-lg hover:bg-error/90 transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-trash mr-2"></i>Supprimer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

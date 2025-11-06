@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" data-theme="cantine">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Gestion Cantine HEG</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cardo:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cardo', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Logo et titre -->
+        <div class="text-center">
+            <div class="mx-auto h-20 w-20 bg-white rounded-full flex items-center justify-center shadow-lg mb-4">
+                <i class="fas fa-utensils text-primary text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-heading font-bold text-white mb-2">
+                HEG Cantine
+            </h1>
+            <p class="text-white/90 text-lg">
+                Gestion de la restauration scolaire
+            </p>
+        </div>
+
+        <!-- Carte de connexion -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 class="text-2xl font-heading font-bold text-center text-neutral mb-6">
+                Connexion
+            </h2>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} shadow-lg mb-4">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle text-success"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle text-error"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        {% else %}
+                        <i class="fas fa-info-circle text-info"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Formulaire -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">
+                            <i class="fas fa-user mr-2"></i>Nom d'utilisateur
+                        </span>
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        autofocus
+                        required
+                        class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none"
+                        placeholder="Votre nom d'utilisateur"
+                    >
+                    {% if form.username.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.username.errors }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">
+                            <i class="fas fa-lock mr-2"></i>Mot de passe
+                        </span>
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none"
+                        placeholder="Votre mot de passe"
+                    >
+                    {% if form.password.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.password.errors }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error shadow-lg">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{{ form.non_field_errors }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="form-control">
+                    <button type="submit" class="btn btn-primary w-full text-white font-semibold py-3 text-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Se connecter
+                    </button>
+                </div>
+            </form>
+
+            <!-- Liens -->
+            <div class="mt-6 text-center space-y-2">
+                <div>
+                    <a href="{% url 'cantine_web:password_reset' %}" class="text-sm text-primary hover:underline">
+                        <i class="fas fa-key mr-1"></i>
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'admin:index' %}" class="text-sm text-neutral/60 hover:text-primary transition-colors">
+                        <i class="fas fa-cog mr-1"></i>
+                        Accéder à l'administration Django
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center">
+            <p class="text-white/80 text-sm">
+                © 2025 Haute École Galilée. Tous droits réservés.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

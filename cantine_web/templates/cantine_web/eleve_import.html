@@ -1,0 +1,60 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Importer des élèves - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Importer des élèves
+        </h1>
+        <p class="text-lg text-neutral/70">Importez des élèves depuis un fichier Excel</p>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <div class="alert alert-info mb-6">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <h3 class="font-bold">Format Excel requis</h3>
+                <p class="text-sm">Le fichier Excel doit contenir les colonnes suivantes :</p>
+                <ul class="list-disc list-inside text-sm mt-2">
+                    <li>Colonne 1 : Prénom (obligatoire)</li>
+                    <li>Colonne 2 : Nom (obligatoire)</li>
+                    <li>Colonne 3 : Classe (optionnel)</li>
+                    <li>Colonne 4 : Téléphone parent (optionnel)</li>
+                    <li>Colonne 5 : Email parent (optionnel)</li>
+                </ul>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-semibold text-neutral">{{ form.fichier.label }}</span>
+                </label>
+                {{ form.fichier }}
+                {% if form.fichier.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.fichier.errors }}</span>
+                </label>
+                {% endif %}
+                <label class="label">
+                    <span class="label-text-alt text-neutral/60">{{ form.fichier.help_text }}</span>
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:eleve_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-file-upload mr-2"></i>Importer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

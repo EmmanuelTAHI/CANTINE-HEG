@@ -1,0 +1,92 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Mon profil - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Mon profil
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.first_name.label }}</span>
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.first_name.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.last_name.label }}</span>
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.last_name.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.email.label }}</span>
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.email.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">Nom d'utilisateur</span>
+                    </label>
+                    <input type="text" value="{{ user.username }}" class="input input-bordered w-full bg-gray-100 border-gray-300" readonly>
+                </div>
+
+                {% if user.profil %}
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">Rôle</span>
+                    </label>
+                    <input type="text" value="{{ user.profil.get_role_display }}" class="input input-bordered w-full bg-gray-100 border-gray-300" readonly>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:dashboard' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-lg font-bold mb-4 text-neutral">Actions</h3>
+            <div class="flex gap-4">
+                <a href="{% url 'cantine_web:password_change' %}" class="px-6 py-3 bg-warning text-white rounded-lg hover:bg-warning/90 transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-key mr-2"></i>Changer le mot de passe
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Détail de la facture {{ facture.numero }} - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Facture {{ facture.numero }}
+                </h1>
+                <p class="text-lg text-neutral/70">Période : {{ facture.mois }}/{{ facture.annee }}</p>
+            </div>
+            <div class="flex gap-3">
+                {% if user.profil.is_prestataire or user.profil.is_admin %}
+                <a href="{% url 'cantine_web:facture_update' facture.pk %}" class="bg-warning text-white px-6 py-3 rounded-lg hover:bg-warning/90 transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-edit mr-2"></i>Modifier
+                </a>
+                {% endif %}
+                <a href="{% url 'cantine_web:facture_list' %}" class="bg-gray-100 text-neutral px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-semibold">
+                    <i class="fas fa-arrow-left mr-2"></i>Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div>
+                <h3 class="font-bold text-lg mb-4 text-neutral">Informations générales</h3>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-sm text-neutral/70">Numéro de facture</p>
+                        <p class="font-semibold text-neutral">{{ facture.numero }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral/70">Période</p>
+                        <p class="font-semibold text-neutral">{{ facture.mois }}/{{ facture.annee }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral/70">Statut</p>
+                        {% if facture.statut == 'PAYEE' %}
+                        <span class="px-3 py-1 bg-success/10 text-success rounded-full text-sm font-semibold">Payée</span>
+                        {% elif facture.statut == 'ENVOYEE' %}
+                        <span class="px-3 py-1 bg-warning/10 text-warning rounded-full text-sm font-semibold">Envoyée</span>
+                        {% elif facture.statut == 'BROUILLON' %}
+                        <span class="px-3 py-1 bg-info/10 text-info rounded-full text-sm font-semibold">Brouillon</span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-error/10 text-error rounded-full text-sm font-semibold">Annulée</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral/70">Date d'émission</p>
+                        <p class="font-semibold text-neutral">{{ facture.date_emission|date:"d/m/Y" }}</p>
+                    </div>
+                    {% if facture.date_paiement %}
+                    <div>
+                        <p class="text-sm text-neutral/70">Date de paiement</p>
+                        <p class="font-semibold text-neutral">{{ facture.date_paiement|date:"d/m/Y" }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg mb-4 text-neutral">Détails financiers</h3>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-sm text-neutral/70">Nombre de jours travaillés</p>
+                        <p class="font-semibold text-neutral">{{ facture.nombre_jours_travail }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral/70">Nombre de repas servis</p>
+                        <p class="font-semibold text-neutral">{{ facture.nombre_repas_servis }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-neutral/70">Prix unitaire</p>
+                        <p class="font-semibold text-neutral">{{ facture.prix_unitaire_repas|floatformat:0 }} FCFA</p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm text-neutral/70">Montant total</p>
+                        <p class="font-bold text-primary text-2xl">{{ facture.montant_total|floatformat:0 }} FCFA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if facture.notes %}
+        <div class="mb-8">
+            <h3 class="font-bold text-lg mb-4 text-neutral">Notes</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-neutral">{{ facture.notes }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="pt-6 border-t border-gray-200">
+            <p class="text-sm text-neutral/60">Créée par : {{ facture.created_by|default:"—" }} le {{ facture.created_at|date:"d/m/Y à H:i" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

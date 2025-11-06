@@ -1,0 +1,123 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Marquer les repas{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Marquer les repas
+        </h1>
+        <p class="text-lg text-neutral/70">Pour le {{ date|date:"d/m/Y" }}</p>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        {% if menu_du_jour %}
+        <div class="bg-primary/10 border border-primary/30 rounded-lg p-6 mb-8">
+            <div class="flex items-center gap-6">
+                {% if menu_du_jour.image %}
+                <img src="{{ menu_du_jour.image.url }}" alt="{{ menu_du_jour.plat_principal }}" class="w-24 h-24 object-cover rounded-lg">
+                {% else %}
+                <div class="w-24 h-24 bg-primary/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-utensils text-4xl text-primary"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <h3 class="font-bold text-lg text-neutral mb-1">Menu du jour</h3>
+                    <p class="text-neutral/70"><strong>{{ menu_du_jour.plat_principal }}</strong></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+
+            <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-neutral">Sélectionner les élèves</h2>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="checkbox checkbox-primary" id="select-all">
+                    <span class="text-sm font-semibold text-neutral">Tout sélectionner</span>
+                </label>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-neutral/70 font-semibold"></th>
+                            <th class="text-neutral/70 font-semibold">Élève</th>
+                            <th class="text-neutral/70 font-semibold">Classe</th>
+                            <th class="text-neutral/70 font-semibold">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eleve in eleves %}
+                        <tr class="{% if eleve.id in eleves_ayant_mange %}opacity-50{% endif %} hover:bg-gray-50">
+                            <td>
+                                {% if eleve.id not in eleves_ayant_mange %}
+                                <input type="checkbox" name="eleves" value="{{ eleve.id }}" class="checkbox checkbox-primary eleve-checkbox">
+                                {% else %}
+                                <span class="text-success text-xl">✓</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    {% if eleve.photo %}
+                                    <div class="avatar">
+                                        <div class="w-10 rounded-full ring-2 ring-primary/20">
+                                            <img src="{{ eleve.photo.url }}" alt="{{ eleve }}">
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="avatar placeholder">
+                                        <div class="bg-primary/10 text-primary rounded-full w-10 ring-2 ring-primary/20">
+                                            <span class="text-xs font-semibold">{{ eleve.prenom|first }}{{ eleve.nom|first }}</span>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <span class="font-semibold text-neutral">{{ eleve.prenom }} {{ eleve.nom }}</span>
+                                </div>
+                            </td>
+                            <td class="text-neutral/70">{{ eleve.classe|default:"—" }}</td>
+                            <td>
+                                {% if eleve.id in eleves_ayant_mange %}
+                                <span class="px-3 py-1 bg-success/10 text-success rounded-lg text-xs font-semibold">A déjà mangé</span>
+                                {% else %}
+                                <span class="px-3 py-1 bg-info/10 text-info rounded-lg text-xs font-semibold">Disponible</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if not eleves %}
+            <div class="alert alert-warning mt-6">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Aucun élève actif trouvé pour cette date. Assurez-vous qu'il y a des élèves actifs dans le système.</span>
+            </div>
+            {% endif %}
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:repas_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer les repas
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('select-all').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.eleve-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+});
+</script>
+{% endblock %}

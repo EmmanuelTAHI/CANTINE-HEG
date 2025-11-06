@@ -1,0 +1,161 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Modifier{% else %}Créer{% endif %} une facture - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            {% if object %}Modifier la facture{% else %}Créer une facture{% endif %}
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.numero.label }}</span>
+                    </label>
+                    {{ form.numero }}
+                    {% if form.numero.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.numero.errors }}</span>
+                    </label>
+                    {% endif %}
+                    <label class="label">
+                        <span class="label-text-alt text-neutral/60">Laissez vide pour génération automatique</span>
+                    </label>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.statut.label }}</span>
+                    </label>
+                    {{ form.statut }}
+                    {% if form.statut.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.statut.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.annee.label }}</span>
+                    </label>
+                    {{ form.annee }}
+                    {% if form.annee.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.annee.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.mois.label }}</span>
+                    </label>
+                    {{ form.mois }}
+                    {% if form.mois.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.mois.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.nombre_jours_travail.label }}</span>
+                    </label>
+                    {{ form.nombre_jours_travail }}
+                    {% if form.nombre_jours_travail.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.nombre_jours_travail.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.nombre_repas_servis.label }}</span>
+                    </label>
+                    {{ form.nombre_repas_servis }}
+                    {% if form.nombre_repas_servis.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.nombre_repas_servis.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.prix_unitaire_repas.label }}</span>
+                    </label>
+                    {{ form.prix_unitaire_repas }}
+                    {% if form.prix_unitaire_repas.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.prix_unitaire_repas.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">Montant total (calculé automatiquement)</span>
+                    </label>
+                    <input type="text" value="{% if object %}{{ object.montant_total|floatformat:0 }}{% else %}0{% endif %} FCFA" class="input input-bordered w-full bg-gray-100 border-gray-300" readonly>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.date_emission.label }}</span>
+                    </label>
+                    {{ form.date_emission }}
+                    {% if form.date_emission.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.date_emission.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.date_paiement.label }}</span>
+                    </label>
+                    {{ form.date_paiement }}
+                    {% if form.date_paiement.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.date_paiement.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.notes.label }}</span>
+                    </label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.notes.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:facture_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

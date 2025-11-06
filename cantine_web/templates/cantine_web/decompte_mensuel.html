@@ -1,0 +1,146 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Décompte mensuel - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Décompte mensuel
+                </h1>
+                <p class="text-lg text-neutral/70">Période : {{ mois }}/{{ annee }}</p>
+            </div>
+            <div class="flex gap-3">
+                <form method="get" class="flex gap-2">
+                    <input type="number" name="annee" placeholder="Année" value="{{ annee }}" min="2020" max="2100" class="input input-bordered bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <input type="number" name="mois" placeholder="Mois" value="{{ mois }}" min="1" max="12" class="input input-bordered bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                        <i class="fas fa-search mr-2"></i>Voir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-primary text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Total repas</h3>
+            <p class="text-3xl font-bold text-neutral">{{ nombre_repas }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-calendar-check text-success text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Jours travaillés</h3>
+            <p class="text-3xl font-bold text-neutral">{{ nombre_jours_travail }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-info text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Élèves servis</h3>
+            <p class="text-3xl font-bold text-neutral">{{ eleves_servis }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-warning text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Moyenne/jour</h3>
+            <p class="text-3xl font-bold text-neutral">
+                {% if nombre_jours_travail > 0 %}
+                {% widthratio nombre_repas nombre_jours_travail 1 %}
+                {% else %}
+                0
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Repas par jour -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <h2 class="text-2xl font-heading font-bold mb-6 text-neutral">
+            <i class="fas fa-calendar-alt text-primary mr-2"></i>Répartition par jour
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Date</th>
+                        <th class="text-neutral/70 font-semibold">Nombre de repas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for jour, count in repas_par_jour.items %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="font-semibold text-neutral">{{ jour }}</td>
+                        <td class="text-neutral">{{ count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center text-neutral/60 py-8">Aucune donnée disponible</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des repas -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-neutral">Détail des repas</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Date</th>
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Classe</th>
+                        <th class="text-neutral/70 font-semibold">Menu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repas_obj in repas %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="text-neutral">{{ repas_obj.date|date:"d/m/Y" }}</td>
+                        <td class="font-semibold text-neutral">{{ repas_obj.eleve.prenom }} {{ repas_obj.eleve.nom }}</td>
+                        <td class="text-neutral/70">{{ repas_obj.eleve.classe|default:"—" }}</td>
+                        <td class="text-neutral">{{ repas_obj.menu.plat_principal|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-neutral/60 py-12">Aucun repas enregistré pour cette période</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

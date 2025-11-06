@@ -1,0 +1,154 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Statistiques - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Statistiques
+        </h1>
+        <p class="text-lg text-neutral/70">Vue d'ensemble des statistiques de la cantine</p>
+    </div>
+</div>
+
+<!-- Statistiques globales -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-primary text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Total élèves</h3>
+            <p class="text-3xl font-bold text-neutral">{{ stats.total_eleves }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-success text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Repas aujourd'hui</h3>
+            <p class="text-3xl font-bold text-neutral">{{ stats.repas_aujourd_hui }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-calendar-check text-info text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Repas ce mois</h3>
+            <p class="text-3xl font-bold text-neutral">{{ stats.repas_ce_mois }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-history text-warning text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Total repas</h3>
+            <p class="text-3xl font-bold text-neutral">{{ stats.repas_total }}</p>
+        </div>
+    </div>
+</div>
+
+{% if is_admin %}
+<!-- Statistiques Admin -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-invoice text-primary text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Montant factures total</h3>
+            <p class="text-3xl font-bold text-primary">{{ stats.montant_factures_total|floatformat:0 }} FCFA</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-double text-success text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Factures payées</h3>
+            <p class="text-3xl font-bold text-neutral">{{ stats.factures_payees }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Graphique repas par jour -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <h2 class="text-2xl font-heading font-bold mb-6 text-neutral">
+            <i class="fas fa-chart-line text-primary mr-2"></i>Repas servis (30 derniers jours)
+        </h2>
+        <div class="overflow-x-auto">
+            <div class="flex gap-2 items-end min-w-max">
+                {% for jour in repas_par_jour %}
+                <div class="flex flex-col items-center min-w-[40px]">
+                    <div class="bg-primary/20 rounded-t-lg p-2 mb-2 w-full text-center" style="height: {% widthratio jour.count 1 3 %}px; min-height: 40px;">
+                        <div class="text-xs font-semibold text-primary">{{ jour.count }}</div>
+                    </div>
+                    <div class="text-xs text-neutral/60 whitespace-nowrap transform -rotate-45 origin-left">{{ jour.date|date:"d/m" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top élèves -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <h2 class="text-2xl font-heading font-bold mb-6 text-neutral">
+            <i class="fas fa-trophy text-warning mr-2"></i>Top 10 élèves ce mois
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Rang</th>
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Classe</th>
+                        <th class="text-neutral/70 font-semibold">Nombre de repas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for eleve in top_eleves %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="font-bold text-primary">
+                            {% if forloop.counter == 1 %}
+                            <i class="fas fa-crown text-warning"></i> 1
+                            {% elif forloop.counter == 2 %}
+                            <i class="fas fa-medal text-neutral"></i> 2
+                            {% elif forloop.counter == 3 %}
+                            <i class="fas fa-award text-orange-600"></i> 3
+                            {% else %}
+                            {{ forloop.counter }}
+                            {% endif %}
+                        </td>
+                        <td class="font-semibold text-neutral">{{ eleve.prenom }} {{ eleve.nom }}</td>
+                        <td class="text-neutral/70">{{ eleve.classe|default:"—" }}</td>
+                        <td class="font-bold text-primary">{{ eleve.nb_repas }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-neutral/60 py-8">Aucune donnée disponible</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

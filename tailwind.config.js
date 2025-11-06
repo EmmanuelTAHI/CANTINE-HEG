@@ -1,0 +1,58 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./cantine_web/templates/**/*.html",
+    "./cantine_web/**/*.py",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        cantine: {
+          "primary": "#9b51e0",  // Violet HEG
+          "secondary": "#9026c9",
+          "accent": "#f59e0b",
+          "neutral": "#2d3748",
+          "base-100": "#ffffff",
+          "base-200": "#f7fafc",
+          "base-300": "#edf2f7",
+          "info": "#4299e1",
+          "success": "#48bb78",
+          "warning": "#ed8936",
+          "error": "#f56565",
+        },
+      },
+      "light",
+      "dark",
+      "cupcake",
+      "bumblebee",
+      "emerald",
+      "corporate",
+      "synthwave",
+      "retro",
+      "cyberpunk",
+      "valentine",
+      "halloween",
+      "garden",
+      "forest",
+      "aqua",
+      "lofi",
+      "pastel",
+      "fantasy",
+      "wireframe",
+      "black",
+      "luxury",
+      "dracula",
+      "cmyk",
+      "autumn",
+      "business",
+      "lemonade",
+      "night",
+      "coffee",
+      "winter",
+    ],
+  },
+};

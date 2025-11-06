@@ -1,0 +1,58 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Classes - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">Classes</h1>
+                <p class="text-lg text-neutral/70">Gestion des classes scolaires</p>
+            </div>
+            <a href="{% url 'cantine_web:classe_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                <i class="fas fa-plus-circle mr-2"></i>Ajouter une classe
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Nom</th>
+                        <th class="text-neutral/70 font-semibold">Niveau</th>
+                        <th class="text-neutral/70 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for classe in classes %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="font-semibold text-neutral">{{ classe.nom }}</td>
+                        <td class="text-neutral/70">{{ classe.niveau }}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a href="{% url 'cantine_web:classe_update' classe.pk %}" class="btn btn-sm btn-ghost text-warning hover:text-white hover:bg-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'cantine_web:classe_delete' classe.pk %}" class="btn btn-sm btn-ghost text-error hover:text-white hover:bg-error">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-neutral/60 py-12">Aucune classe trouvée</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

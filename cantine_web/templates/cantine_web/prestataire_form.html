@@ -1,0 +1,130 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Modifier{% else %}Créer{% endif %} un prestataire - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            {% if object %}Modifier le prestataire{% else %}Créer un prestataire{% endif %}
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-neutral mb-4">Informations de connexion</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">Nom d'utilisateur</span>
+                        </label>
+                        <input type="text" name="username" value="{{ form.username.value|default:'' }}" required class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                        {% if form.username.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.username.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">Email</span>
+                        </label>
+                        <input type="email" name="email" value="{{ form.email.value|default:'' }}" required class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                        {% if form.email.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.email.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">Prénom</span>
+                        </label>
+                        <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                        {% if form.first_name.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.first_name.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">Nom</span>
+                        </label>
+                        <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                        {% if form.last_name.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.last_name.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-bold text-neutral mb-4">Profil Cantine</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">{{ form.role.label }}</span>
+                        </label>
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.role.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">{{ form.entreprise.label }}</span>
+                        </label>
+                        {{ form.entreprise }}
+                        {% if form.entreprise.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.entreprise.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold text-neutral">{{ form.telephone.label }}</span>
+                        </label>
+                        {{ form.telephone }}
+                        {% if form.telephone.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.telephone.errors }}</span>
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-4">
+                            {{ form.actif }}
+                            <span class="label-text font-semibold text-neutral">{{ form.actif.label }}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:prestataire_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

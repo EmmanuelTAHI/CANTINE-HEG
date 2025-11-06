@@ -1,0 +1,86 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Modifier{% else %}Ajouter{% endif %} une inscription mensuelle - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            {% if object %}Modifier l'inscription{% else %}Ajouter une inscription mensuelle{% endif %}
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.eleve.label }}</span>
+                    </label>
+                    {{ form.eleve }}
+                    {% if form.eleve.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.eleve.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.annee.label }}</span>
+                    </label>
+                    {{ form.annee }}
+                    {% if form.annee.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.annee.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.mois.label }}</span>
+                    </label>
+                    {{ form.mois }}
+                    {% if form.mois.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.mois.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label cursor-pointer justify-start gap-4">
+                        {{ form.inscrit }}
+                        <span class="label-text font-semibold text-neutral">{{ form.inscrit.label }}</span>
+                    </label>
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.notes.label }}</span>
+                    </label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.notes.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:inscription_mensuelle_list' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Repas - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">Repas</h1>
+                <p class="text-lg text-neutral/70">Historique des repas servis</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{% url 'cantine_web:repas_marquer' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-check-double mr-2"></i>Marquer les repas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input type="date" name="date" value="{{ date_selected }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <select name="eleve" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous les élèves</option>
+                {% for eleve in eleves %}
+                <option value="{{ eleve.id }}">{{ eleve }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                <i class="fas fa-search mr-2"></i>Filtrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Date</th>
+                        <th class="text-neutral/70 font-semibold">Menu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repas in repas %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                {% if repas.eleve.photo %}
+                                <div class="avatar">
+                                    <div class="w-10 rounded-full ring-2 ring-primary/20">
+                                        <img src="{{ repas.eleve.photo.url }}" alt="{{ repas.eleve }}">
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary/10 text-primary rounded-full w-10 ring-2 ring-primary/20">
+                                        <span class="text-xs font-semibold">{{ repas.eleve.prenom|first }}{{ repas.eleve.nom|first }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-bold text-neutral">{{ repas.eleve.prenom }} {{ repas.eleve.nom }}</div>
+                                    <div class="text-sm text-neutral/60">{{ repas.eleve.classe|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-neutral">{{ repas.date|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                {% if repas.menu and repas.menu.image %}
+                                <img src="{{ repas.menu.image.url }}" alt="{{ repas.menu.plat_principal }}" class="w-10 h-10 object-cover rounded-lg">
+                                {% endif %}
+                                <span class="text-neutral">{{ repas.menu.plat_principal|default:"—" }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-neutral/60 py-12">Aucun repas trouvé</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

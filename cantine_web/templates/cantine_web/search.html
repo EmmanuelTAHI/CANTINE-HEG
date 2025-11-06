@@ -1,0 +1,94 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Recherche - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Recherche globale
+        </h1>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="get" class="mb-8">
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-semibold text-neutral">Rechercher</span>
+                </label>
+                <div class="flex gap-2">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Rechercher..." class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        {% if query %}
+        <div class="space-y-6">
+            {% if results.eleves %}
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-neutral">Élèves ({{ results.eleves|length }})</h2>
+                <div class="space-y-2">
+                    {% for eleve in results.eleves %}
+                    <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                        <a href="{% url 'cantine_web:eleve_detail' eleve.pk %}" class="font-semibold text-primary hover:underline">
+                            {{ eleve.prenom }} {{ eleve.nom }}
+                        </a>
+                        <p class="text-sm text-neutral/60">{{ eleve.classe|default:"Sans classe" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if results.menus %}
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-neutral">Menus ({{ results.menus|length }})</h2>
+                <div class="space-y-2">
+                    {% for menu in results.menus %}
+                    <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                        <a href="{% url 'cantine_web:menu_list' %}" class="font-semibold text-primary hover:underline">
+                            {{ menu.plat_principal }} - {{ menu.date|date:"d/m/Y" }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if results.factures %}
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-neutral">Factures ({{ results.factures|length }})</h2>
+                <div class="space-y-2">
+                    {% for facture in results.factures %}
+                    <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                        <a href="{% url 'cantine_web:facture_detail' facture.pk %}" class="font-semibold text-primary hover:underline">
+                            {{ facture.numero }} - {{ facture.mois }}/{{ facture.annee }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if not results.eleves and not results.menus and not results.factures %}
+            <div class="text-center py-12">
+                <i class="fas fa-search text-6xl text-neutral/30 mb-4"></i>
+                <p class="text-lg text-neutral/60">Aucun résultat trouvé pour "{{ query }}"</p>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-search text-6xl text-neutral/30 mb-4"></i>
+            <p class="text-lg text-neutral/60">Entrez un terme de recherche ci-dessus</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

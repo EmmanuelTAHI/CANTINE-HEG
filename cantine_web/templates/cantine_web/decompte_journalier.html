@@ -1,0 +1,133 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Décompte journalier - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Décompte journalier
+                </h1>
+                <p class="text-lg text-neutral/70">Repas servis le {{ date|date:"d/m/Y" }}</p>
+            </div>
+            <div class="flex gap-3">
+                <form method="get" class="flex gap-2">
+                    <input type="date" name="date" value="{{ date|date:'Y-m-d' }}" class="input input-bordered bg-white border-gray-300 focus:border-primary focus:outline-none">
+                    <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                        <i class="fas fa-search mr-2"></i>Voir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Menu du jour -->
+{% if menu %}
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-bold mb-4 text-neutral">Menu du jour</h2>
+        <div class="flex items-center gap-4">
+            {% if menu.image %}
+            <img src="{{ menu.image.url }}" alt="{{ menu.plat_principal }}" class="w-24 h-24 object-cover rounded-lg">
+            {% endif %}
+            <div>
+                <p class="font-semibold text-lg text-neutral">{{ menu.plat_principal }}</p>
+                {% if menu.accompagnement %}
+                <p class="text-neutral/70">{{ menu.accompagnement }}</p>
+                {% endif %}
+                {% if menu.dessert %}
+                <p class="text-neutral/70">{{ menu.dessert }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Statistiques -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-primary text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Nombre de repas</h3>
+            <p class="text-3xl font-bold text-neutral">{{ nombre_repas }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-success text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Élèves servis</h3>
+            <p class="text-3xl font-bold text-neutral">{{ eleves_servis }}</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-calendar-day text-info text-xl"></i>
+                </div>
+            </div>
+            <h3 class="text-sm text-neutral/70 mb-1">Date</h3>
+            <p class="text-xl font-bold text-neutral">{{ date|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des repas -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200 bg-gray-50">
+                        <th class="text-neutral/70 font-semibold">Élève</th>
+                        <th class="text-neutral/70 font-semibold">Classe</th>
+                        <th class="text-neutral/70 font-semibold">Plat principal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repas_obj in repas %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                {% if repas_obj.eleve.photo %}
+                                <div class="avatar">
+                                    <div class="w-10 rounded-full ring-2 ring-primary/20">
+                                        <img src="{{ repas_obj.eleve.photo.url }}" alt="{{ repas_obj.eleve }}">
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary/10 text-primary rounded-full w-10 ring-2 ring-primary/20">
+                                        <span class="text-xs font-semibold">{{ repas_obj.eleve.prenom|first }}{{ repas_obj.eleve.nom|first }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="font-semibold text-neutral">{{ repas_obj.eleve.prenom }} {{ repas_obj.eleve.nom }}</div>
+                            </div>
+                        </td>
+                        <td class="text-neutral/70">{{ repas_obj.eleve.classe|default:"—" }}</td>
+                        <td class="text-neutral">{{ repas_obj.menu.plat_principal|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-neutral/60 py-12">Aucun repas enregistré pour ce jour</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

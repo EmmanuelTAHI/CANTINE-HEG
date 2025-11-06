@@ -1,0 +1,114 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Générer un rapport - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+            Générer un rapport
+        </h1>
+        <p class="text-lg text-neutral/70">Exportez les données en PDF ou Excel</p>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 mb-8 max-w-4xl">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.type_rapport.label }}</span>
+                    </label>
+                    {{ form.type_rapport }}
+                    {% if form.type_rapport.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.type_rapport.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.date_debut.label }}</span>
+                    </label>
+                    {{ form.date_debut }}
+                    {% if form.date_debut.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.date_debut.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.date_fin.label }}</span>
+                    </label>
+                    {{ form.date_fin }}
+                    {% if form.date_fin.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.date_fin.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.annee.label }}</span>
+                    </label>
+                    {{ form.annee }}
+                    {% if form.annee.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.annee.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.mois.label }}</span>
+                    </label>
+                    {{ form.mois }}
+                    {% if form.mois.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.mois.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control md:col-span-2">
+                    <label class="label">
+                        <span class="label-text font-semibold text-neutral">{{ form.format_export.label }}</span>
+                    </label>
+                    {{ form.format_export }}
+                    {% if form.format_export.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.format_export.errors }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-info/10 border border-info/30 rounded-lg">
+                <p class="text-sm text-neutral/80">
+                    <i class="fas fa-info-circle text-info mr-2"></i>
+                    <strong>Rapport journalier :</strong> Sélectionnez une date<br>
+                    <strong>Rapport hebdomadaire :</strong> Sélectionnez une date de début et de fin<br>
+                    <strong>Rapport mensuel :</strong> Sélectionnez une année et un mois
+                </p>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                <a href="{% url 'cantine_web:dashboard' %}" class="px-6 py-3 bg-gray-100 text-neutral rounded-lg hover:bg-gray-200 transition-colors font-semibold">Annuler</a>
+                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-file-download mr-2"></i>Générer le rapport
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

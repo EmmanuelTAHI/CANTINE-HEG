@@ -1,0 +1,124 @@
+{% extends 'cantine_web/base.html' %}
+{% load static %}
+
+{% block title %}Liste des élèves - Gestion Cantine HEG{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-primary/10 via-white to-primary/10 py-12 mb-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-5xl font-heading font-bold mb-2 text-neutral">
+                    Élèves
+                </h1>
+                <p class="text-lg text-neutral/70">Gestion des élèves inscrits à la cantine</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{% url 'cantine_web:eleve_import' %}" class="bg-info text-white px-6 py-3 rounded-lg hover:bg-info/90 transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-file-upload mr-2"></i>Importer
+                </a>
+                <a href="{% url 'cantine_web:eleve_export' %}" class="bg-success text-white px-6 py-3 rounded-lg hover:bg-success/90 transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-file-download mr-2"></i>Exporter
+                </a>
+                <a href="{% url 'cantine_web:eleve_create' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold shadow-sm hover:shadow-md">
+                    <i class="fas fa-user-plus mr-2"></i>Ajouter un élève
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input type="text" name="search" placeholder="Rechercher un élève..." value="{{ search }}" class="input input-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+            <select name="classe" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Toutes les classes</option>
+                {% for classe in classes %}
+                <option value="{{ classe.id }}" {% if classe_selected == classe.id|stringformat:"s" %}selected{% endif %}>{{ classe }}</option>
+                {% endfor %}
+            </select>
+            <select name="actif" class="select select-bordered w-full bg-white border-gray-300 focus:border-primary focus:outline-none">
+                <option value="">Tous</option>
+                <option value="1" {% if actif_selected == "1" %}selected{% endif %}>Actifs</option>
+                <option value="0" {% if actif_selected == "0" %}selected{% endif %}>Inactifs</option>
+            </select>
+            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                <i class="fas fa-search mr-2"></i>Filtrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des élèves -->
+<div class="container mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for eleve in eleves %}
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div class="p-6 text-center">
+                {% if eleve.photo %}
+                <div class="avatar mb-4">
+                    <div class="w-24 rounded-full ring-4 ring-primary/20">
+                        <img src="{{ eleve.photo.url }}" alt="{{ eleve }}">
+                    </div>
+                </div>
+                {% else %}
+                <div class="avatar placeholder mb-4">
+                    <div class="bg-primary/10 text-primary rounded-full w-24 ring-4 ring-primary/20">
+                        <span class="text-3xl font-bold">{{ eleve.prenom|first }}{{ eleve.nom|first }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                <h2 class="text-xl font-bold mb-1 text-neutral">{{ eleve.prenom }} {{ eleve.nom }}</h2>
+                <p class="text-sm text-neutral/60 mb-4">{{ eleve.classe|default:"Sans classe" }}</p>
+                <div class="mb-4">
+                    {% if eleve.actif %}
+                    <span class="inline-block px-4 py-2 rounded-lg bg-success/10 text-success font-semibold">
+                        <i class="fas fa-check-circle mr-1"></i>Actif
+                    </span>
+                    {% else %}
+                    <span class="inline-block px-4 py-2 rounded-lg bg-error/10 text-error font-semibold">
+                        <i class="fas fa-times-circle mr-1"></i>Inactif
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2 justify-center">
+                    <a href="{% url 'cantine_web:eleve_detail' eleve.pk %}" class="bg-primary/10 text-primary px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-colors text-sm font-semibold">
+                        <i class="fas fa-eye mr-1"></i>Voir
+                    </a>
+                    <a href="{% url 'cantine_web:eleve_update' eleve.pk %}" class="bg-warning/10 text-warning px-4 py-2 rounded-lg hover:bg-warning hover:text-white transition-colors text-sm font-semibold">
+                        <i class="fas fa-edit mr-1"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-12 text-center">
+                <i class="fas fa-users text-6xl text-neutral/30 mb-4"></i>
+                <p class="text-lg text-neutral/60">Aucun élève trouvé</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="container mx-auto px-4 mb-8">
+    <div class="flex justify-center">
+        <div class="join bg-white border border-gray-200 rounded-lg shadow-sm">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">«</a>
+            {% endif %}
+            <button class="join-item btn bg-white border-gray-200 text-neutral">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</button>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="join-item btn bg-white border-gray-200 hover:bg-primary/10 hover:text-primary">»</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
